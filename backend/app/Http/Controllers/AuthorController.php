@@ -17,8 +17,9 @@ class AuthorController extends Controller
      */
     public function index()
     {
-        if (request('name')) {
-            $authors = Author::where('name', 'LIKE', request('name').'%')->get();
+        if(request()->has('name'))
+        {
+            $authors = Author::where('name', 'LIKE', '%'.request()->query('name').'%')->get();
             return new AuthorCollection($authors);
         }
 
