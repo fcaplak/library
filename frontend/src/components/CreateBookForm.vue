@@ -1,7 +1,7 @@
 <template>
   <b-row class="rounded shadow p-3 pt-3 mb-5">
     <b-container>
-      <b-form @submit="onSubmit">
+      <b-form ref="bookForm" @submit="onSubmit">
         <b-row class="p-1 mt-2">
           <b-col>
             <b-form-group label="Názov knihy">
@@ -54,15 +54,14 @@
           <b-col>
             <b-form-group label="Autor">
               <vue3-simple-typeahead
-            id="typeahead"
-            placeholder="Autor"
-            :items="authors"
-            :minInputLength="2"
-            @onInput="onInput"
-            @onBlur="onBlur"
-            required
->
-</vue3-simple-typeahead>
+                id="typeahead"
+                placeholder="Autor"
+                :items="authors"
+                :minInputLength="2"
+                @onInput="onInput"
+                @onBlur="onBlur"
+                required
+                ></vue3-simple-typeahead>
             </b-form-group>
           </b-col>
         </b-row>
@@ -74,54 +73,94 @@
           </b-col>
         </b-row>
       </b-form>
-       <!--      <b-card class="mt-3" header="Form Data Result">
+      <!--      <b-card class="mt-3" header="Form Data Result">
         <pre class="m-0">{{ form }}</pre>
         </b-card>--->
     </b-container>
   </b-row>
 </template>
 <script>
-import axios from 'axios'
-  export default {
-    data() {
-      return {
-        form: {
-          name: '',
-          isbn: '',
-          price: null,
-          category_id: null,
-          author: ''
-        },
-        options: [],
-        authors: []
-      }
-    },
-    mounted() {
-      document.getElementById("typeahead").className = "form-control"
-      axios
-        .get('http://localhost:8000/api/v1/categories', { headers: { 'Content-Type': 'application/json' } })
-        .then(response => this.options = response.data.map(({id: value, name: text})=>({text, value})))
-    },
-    methods: {
-      onSubmit(e){
-        e.preventDefault()
-        axios.post('http://localhost:8000/api/v1/books', this.form, { headers: { 'Content-Type': 'application/json' } })
-            .then(() => { this.$root.$emit("books-table-update") })
-          .catch((error) => {
-          alert(error.response.data.message)
-          })
-    },
-      onInput(event) {
-        this.form.author = event.input;
-        axios
-        .get('http://localhost:8000/api/v1/authors/?name='+event.input, { headers: { 'Content-Type': 'application/json' } })
-        .then(response => this.authors = response.data.map(value => value.name))
+import axios from "axios"
+export default {
+  data() {
+    return {
+      form: {
+        name: "",
+        isbn: "",
+        price: null,
+        category_id: null,
+        author: "",
       },
-      onBlur(event) {
-        this.form.author = event.input;
-      },
+      options: [],
+      authors: [],
     }
-  }
+  },
+  mounted() {
+    document.getElementById("typeahead").className = "form-control"
+    axios
+      .get("http://localhost:8000/api/v1/categories", {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then(
+        (response) =>
+          (this.options = response.data.map(({ id: value, name: text }) => ({
+            text,
+            value,
+          })))
+      )
+      .catch((error) => {
+        this.$bvToast.toast("Nepodarilo sa načítať údaje z API: " + error, {
+          title: "Chyba!",
+          solid: true,
+          variant: "danger",
+          autoHideDelay: 5000,
+        })
+      })
+  },
+  methods: {
+    onSubmit(e) {
+      e.preventDefault()
+      axios
+        .post("http://localhost:8000/api/v1/books", this.form, {
+          headers: { "Content-Type": "application/json" },
+        })
+        .then(() => {
+          this.$root.$emit("books-table-update")
+          this.$bvToast.toast("Kniha bola pridaná do knižnice.", {
+            toaster: "b-toaster-top-center",
+            title: "Úspech!",
+            solid: true,
+            variant: "success",
+            autoHideDelay: 5000,
+          })
+          this.$refs.bookForm.reset()
+        })
+        .catch((error) => {
+          this.$bvToast.toast(error.response.data.message, {
+            toaster: "b-toaster-top-center",
+            title: "Chyba!",
+            solid: true,
+            variant: "danger",
+            autoHideDelay: 7000
+          })
+        })
+    },
+    onInput(event) {
+      this.form.author = event.input
+      axios
+        .get("http://localhost:8000/api/v1/authors/?name=" + event.input, {
+          headers: { "Content-Type": "application/json" },
+        })
+        .then(
+          (response) =>
+            (this.authors = response.data.map((value) => value.name))
+        )
+    },
+    onBlur(event) {
+      this.form.author = event.input
+    },
+  },
+}
 </script>
 <style>
 input::-webkit-outer-spin-button,

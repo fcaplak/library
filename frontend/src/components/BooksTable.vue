@@ -1,19 +1,19 @@
 <template>
-    <b-row class="rounded shadow">
+  <b-row class="rounded shadow">
     <b-table
-        class="rounded"
-        striped hover
-        head-variant="dark"
-        :items="items"
-        :fields="fields"
-        sort-icon-left
-        responsive
-    >
-        <template #cell(price)="data">
-            {{ data.value }} €
-        </template>
+      class="rounded"
+      striped hover
+      head-variant="dark"
+      :items="items"
+      :fields="fields"
+      sort-icon-left
+      responsive
+      >
+      <template #cell(price)="data">
+        {{ data.value }} €
+      </template>
     </b-table>
-    </b-row>
+  </b-row>
 </template>
 
 <script>

@@ -28,7 +28,7 @@ class StoreBookRequest extends FormRequest
         return [
             'name' => ['required'],
             'isbn' => ['required'],
-            'price' => ['required'],
+            'price' => ['required','decimal:0,2'],
             'category_id' => ['required'],
             'author' => ['required']
         ];
