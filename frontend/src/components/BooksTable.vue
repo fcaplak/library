@@ -13,6 +13,12 @@
         {{ data.value }} €
       </template>
     </b-table>
+    <b-skeleton-table v-show="tableSkeleton"
+      :rows="10"
+      :columns="5"
+      :table-props="{ striped: true }"
+      :hideHeader=true
+    ></b-skeleton-table>
   </b-row>
 </template>
 
@@ -26,18 +32,22 @@
           { key: 'isbn', label: 'ISBN'},
           { key: 'price', label: 'Cena', sortable: true },
           { key: 'category', label: 'Kategória' },
-          { key: 'author', label: 'Autor'}
+          { key: 'author', label: 'Autor' }
         ],
-        items: []
+        items: [],
+        tableSkeleton : true
       }
     },
-    mounted() {
+  mounted() {
       this.$root.$on("books-table-update", () => { axios
-        .get('http://localhost:8000/api/v1/books')
+        .get(import.meta.env.VITE_API_URL + "books")
         .then(response => this.items = response.data) })
       axios
-        .get('http://localhost:8000/api/v1/books')
+        .get(import.meta.env.VITE_API_URL + "books")
         .then(response => this.items = response.data)
+        .finally(() => {
+          this.tableSkeleton = false
+        })
     }
   }
 </script>

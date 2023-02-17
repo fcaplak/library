@@ -1,8 +1,5 @@
-#choose the OS as a basae image
 FROM php:8.1.0-fpm
-#add metadata
-LABEL version="1.0.0"
-#install required dependencies
+
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpng-dev \
@@ -20,21 +17,17 @@ RUN docker-php-ext-configure gd --enable-gd --with-freetype=/usr/include/ --with
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-#specify the directory where the source code must be copied 
 WORKDIR /var/www
-#Copy from the host machine to image
-COPY composer.json composer.lock ./
 
+COPY composer.json composer.lock ./
 COPY . .
-#copy environment file
 COPY ./.env.example ./.env
 
 RUN composer install
 
+RUN php artisan cache:clear
 RUN php artisan key:generate --ansi
 
-RUN php artisan storage:link
-RUN php artisan migrate:fresh --seed
-
-#choose the port to communicate with a container
 EXPOSE 8000
+
+ENTRYPOINT php artisan migrate:fresh --seed && php artisan serve --host 0.0.0.0

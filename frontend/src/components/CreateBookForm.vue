@@ -54,6 +54,7 @@
           <b-col>
             <b-form-group label="Autor">
               <vue3-simple-typeahead
+                ref="autoComplete"
                 id="typeahead"
                 placeholder="Autor"
                 :items="authors"
@@ -73,9 +74,6 @@
           </b-col>
         </b-row>
       </b-form>
-      <!--      <b-card class="mt-3" header="Form Data Result">
-        <pre class="m-0">{{ form }}</pre>
-        </b-card>--->
     </b-container>
   </b-row>
 </template>
@@ -98,7 +96,7 @@ export default {
   mounted() {
     document.getElementById("typeahead").className = "form-control"
     axios
-      .get("http://localhost:8000/api/v1/categories", {
+      .get(import.meta.env.VITE_API_URL + "categories", {
         headers: { "Content-Type": "application/json" },
       })
       .then(
@@ -109,7 +107,7 @@ export default {
           })))
       )
       .catch((error) => {
-        this.$bvToast.toast("Nepodarilo sa načítať údaje z API: " + error, {
+        this.$bvToast.toast("Nepodarilo sa pripojiť k API. " + error, {
           title: "Chyba!",
           solid: true,
           variant: "danger",
@@ -121,7 +119,7 @@ export default {
     onSubmit(e) {
       e.preventDefault()
       axios
-        .post("http://localhost:8000/api/v1/books", this.form, {
+        .post(import.meta.env.VITE_API_URL + "books", this.form, {
           headers: { "Content-Type": "application/json" },
         })
         .then(() => {
@@ -148,7 +146,7 @@ export default {
     onInput(event) {
       this.form.author = event.input
       axios
-        .get("http://localhost:8000/api/v1/authors/?name=" + event.input, {
+        .get(import.meta.env.VITE_API_URL + "authors/?name=" + event.input, {
           headers: { "Content-Type": "application/json" },
         })
         .then(

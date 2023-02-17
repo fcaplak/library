@@ -16,5 +16,9 @@ export default {
         }
       }
     })
-  ]
+  ],
+  server: {
+    host: true,
+    port: 9000
+  }
 }
