@@ -14,7 +14,7 @@ Laravel - backend
 
 `cd library`
 
-`docker compose up`
+`docker-compose up`
 
 Website url: http://localhost:9000
 
