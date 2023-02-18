@@ -8,9 +8,9 @@ services:
       MYSQL_DATABASE: laravel
       MYSQL_ROOT_PASSWORD: mypass
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-uroot", "-ppass"]
-      interval: 15s
-      timeout: 15s
+      test: mysql --user=root --password=$$MYSQL_ROOT_PASSWORD -e 'SELECT 1'
+      interval: 5s
+      timeout: 5s
       retries: 20
     ports:
       - 3366:3306
